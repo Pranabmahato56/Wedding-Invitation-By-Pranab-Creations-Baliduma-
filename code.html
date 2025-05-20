@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>शादी का निमंत्रण जेनरेटर</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&family=Tiro+Devanagari+Hindi:wght@400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%); /* Lighter, warm gradient */
+      color: #4e342e; /* Deep brown */
+      padding: 20px;
+      max-width: 800px;
+      margin: 20px auto;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(15px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    h1 {
+      text-align: center;
+      color: #d84315; /* Deep orange/saffron */
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .section {
+      margin-bottom: 30px;
+      background-color: #fffdf9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: #5d4037; /* Brown */
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      width: calc(100% - 22px);
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #d7ccc8; /* Light brown border */
+      margin-bottom: 15px;
+      font-size: 1em;
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      background-color: #f5f5f5;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    textarea:focus {
+      border-color: #ff9800; /* Orange focus */
+      box-shadow: 0 0 5px rgba(255, 152, 0, 0.5);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      background: #ff9800; /* Vibrant orange */
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      display: block;
+      margin: 25px auto 10px auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      background: #e68900; /* Darker orange */
+      transform: translateY(-2px);
+    }
+    button:active {
+      transform: translateY(0px);
+    }
+
+    .preview {
+      background: #fffef0; /* Creamy white */
+      padding: 20px 30px;
+      margin-top: 30px;
+      border: 1px solid #e65100; /* Dashed orange border */
+      border-top: 5px solid #e65100; /* Solid top border */
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      animation: fadeInPreview 0.8s ease-in-out forwards;
+      opacity: 0; /* Start hidden for animation */
+      line-height: 1.8;
+    }
+
+    @keyframes fadeInPreview {
+      from {opacity: 0; transform: scale(0.95);}
+      to {opacity: 1; transform: scale(1);}
+    }
+
+    .preview h2, .preview h3 {
+      text-align: center;
+      font-family: 'Tiro Devanagari Hindi', serif;
+      color: #bf360c; /* Deep Saffron/Red */
+    }
+    .preview h2 { font-size: 1.8em; margin-bottom: 5px;}
+    .preview h3 { font-size: 1.4em; margin-bottom: 20px;}
+    .preview p { margin: 12px 0; color: #5c1a00; }
+    .preview strong { color: #8d2400; } /* Darker brown for emphasis */
+
+    .share-controls {
+      text-align: center;
+      margin-top: 20px;
+      display: none; /* Hidden initially */
+    }
+
+    .share-controls button {
+      margin: 10px;
+      display: inline-block;
+    }
+
+    #whatsappShareBtn {
+      background: #25D366; /* WhatsApp Green */
+    }
+    #whatsappShareBtn:hover {
+      background: #1DAE54;
+    }
+
+    #generatedLinkContainer {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      display: none; /* Hidden initially */
+      text-align: center;
+    }
+    #generatedLinkContainer label {
+      margin-top: 0;
+      margin-bottom: 5px;
+      display: block;
+    }
+    #shareableLink {
+      width: calc(100% - 22px);
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      font-size: 0.9em;
+      box-sizing: border-box;
+      margin-bottom: 5px;
+    }
+    #linkInfo {
+        font-size: 0.8em;
+        color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>शादी का निमंत्रण</h1>
+
+  <form id="invitationForm" class="section">
+    <label for="groomName">वर का नाम:</label>
+    <input type="text" id="groomName" name="groomName" required>
+
+    <label for="groomFather">वर के पिता का नाम:</label>
+    <input type="text" id="groomFather" name="groomFather" required>
+
+    <label for="groomAddress">वर का पता:</label>
+    <textarea id="groomAddress" name="groomAddress" required></textarea>
+
+    <label for="brideName">वधु का नाम:</label>
+    <input type="text" id="brideName" name="brideName" required>
+
+    <label for="brideFather">वधु के पिता का नाम:</label>
+    <input type="text" id="brideFather" name="brideFather" required>
+
+    <label for="brideAddress">वधु का पता:</label> <!-- नया फ़ील्ड -->
+    <textarea id="brideAddress" name="brideAddress" required></textarea>
+
+    <label for="weddingDate">विवाह तिथि:</label>
+    <input type="date" id="weddingDate" name="weddingDate" required>
+
+    <label for="weddingTime">विवाह समय:</label>
+    <input type="text" id="weddingTime" name="weddingTime" placeholder="जैसे: शाम ७:०० बजे" required>
+
+    <label for="venue">विवाह स्थान:</label>
+    <input type="text" id="venue" name="venue" required>
+
+    <label for="groomContact">संपर्क (वर पक्ष):</label>
+    <input type="text" id="groomContact" name="groomContact">
+
+    <label for="brideContact">संपर्क (वधु पक्ष):</label>
+    <input type="text" id="brideContact" name="brideContact">
+
+    <label for="hostName">निमंत्रक का नाम (आपके परिवार का नाम):</label>
+    <input type="text" id="hostName" name="hostName" placeholder="जैसे: समस्त शर्मा परिवार" required>
+
+
+    <button type="button" onclick="generateCard()">इन्विटेशन बनाएं</button>
+  </form>
+
+  <div class="preview" id="cardPreview">
+    <!-- Preview will be generated here -->
+  </div>
+
+  <div id="generatedLinkContainer">
+    <label for="shareableLink">शेयर करने योग्य लिंक:</label>
+    <input type="text" id="shareableLink" readonly>
+    <p id="linkInfo">नोट: यह लिंक तभी काम करेगा जब यह पेज किसी वेब सर्वर पर होस्ट किया गया हो, न कि सीधे फ़ाइल से खोला गया हो।</p>
+  </div>
+
+  <div class="share-controls" id="shareControls">
+    <button id="systemShareBtn" onclick="shareInviteSystem()">Share This Invitation</button>
+    <button id="whatsappShareBtn" onclick="shareOnWhatsApp()">Share on WhatsApp</button>
+  </div>
+
+  <script>
+    const formElements = [
+      'groomName', 'groomFather', 'groomAddress', 
+      'brideName', 'brideFather', 'brideAddress', // brideAddress जोड़ा गया
+      'weddingDate', 'weddingTime', 'venue', 
+      'groomContact', 'brideContact', 'hostName'
+    ];
+
+    // आवश्यक फ़ील्ड की सूची (अपनी आवश्यकतानुसार अपडेट करें)
+    const requiredFields = [
+        'groomName', 'groomFather', 'groomAddress',
+        'brideName', 'brideFather', 'brideAddress',
+        'weddingDate', 'weddingTime', 'venue', 'hostName'
+    ];
+
+
+    window.onload = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      formElements.forEach(id => {
+        if (urlParams.has(id)) {
+          const element = document.getElementById(id);
+          if (element) {
+            element.value = urlParams.get(id);
+            hasParams = true;
+          }
+        }
+      });
+      if (hasParams) {
+        generateCard();
+      }
+    };
+
+    function getFormData() {
+      const formData = {};
+      formElements.forEach(id => {
+        formData[id] = document.getElementById(id).value;
+      });
+      return formData;
+    }
+
+    function generateShareableLink(data) {
+      const queryParams = new URLSearchParams(data).toString();
+      // यह सुनिश्चित करें कि पेज एक सर्वर से सर्व किया जा रहा है
+      if (window.location.origin && window.location.origin !== "null" && window.location.protocol.startsWith("http")) {
+        return `${window.location.origin}${window.location.pathname}?${queryParams}`;
+      } else {
+        // अगर फ़ाइल स्थानीय रूप से खोली गई है, तो एक प्लेसहोल्डर या चेतावनी दें
+        // वास्तविक शेयरिंग के लिए यह काम नहीं करेगा
+        document.getElementById('linkInfo').textContent = "चेतावनी: यह लिंक स्थानीय रूप से बनाया गया है और दूसरों के साथ शेयर करने पर काम नहीं करेगा। कृपया इस पेज को वेब सर्वर पर होस्ट करें।";
+        return `file://${window.location.pathname}?${queryParams}`; // यह केवल स्थानीय टेस्टिंग के लिए है
+      }
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "";
+      try {
+        const dateObj = new Date(dateString);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kolkata' };
+        return dateObj.toLocaleDateString('hi-IN', options);
+      } catch (e) {
+        console.error("Error formatting date:", e);
+        return dateString; 
+      }
+    }
+
+    function generateCard() {
+      const data = getFormData();
+      let allFieldsFilled = true;
+      let missingFields = [];
+
+      requiredFields.forEach(fieldId => {
+        const fieldElement = document.getElementById(fieldId);
+        const fieldLabel = document.querySelector(`label[for='${fieldId}']`).innerText.replace(':', '');
+        if (!data[fieldId]) {
+          allFieldsFilled = false;
+          missingFields.push(fieldLabel);
+          if(fieldElement) fieldElement.style.borderColor = 'red'; // Highlight missing field
+        } else {
+          if(fieldElement) fieldElement.style.borderColor = '#d7ccc8'; // Reset border color
+        }
+      });
+
+      if (!allFieldsFilled) {
+        alert(`कृपया निम्नलिखित आवश्यक फ़ील्ड भरें:\n- ${missingFields.join('\n- ')}`);
+        return;
+      }
+
+      const formattedDate = formatDate(data.weddingDate);
+
+      const html = `
+        <h2>|| श्री गणेशाय नमः ||</h2>
+        <h3>।। सप्रेम स्नेह निमंत्रण ।।</h3>
+        <p style="text-align:center;">सादर सूचित करना है कि हमारे प्रिय</p>
+        <p><strong>वर:</strong> चिरंजीव ${data.groomName}<br>
+        (सुपुत्र श्री ${data.groomFather})<br>
+        <strong>पता:</strong> ${data.groomAddress || 'उपलब्ध नहीं'}</p>
+        <p>संग</p>
+        <p><strong>वधु:</strong> आयुष्मती ${data.brideName}<br>
+        (सुपुत्री श्री ${data.brideFather})<br>
+        <strong>पता:</strong> ${data.brideAddress || 'उपलब्ध नहीं'}</p> <!-- वधु का पता दिखाया गया -->
+        <p>का शुभ-विवाह</p>
+        <p><strong>विवाह तिथि:</strong> ${formattedDate}<br>
+        <strong>समय:</strong> ${data.weddingTime}</p>
+        <p><strong>स्थान:</strong> ${data.venue}</p>
+        <p>को होना निश्चित हुआ है।</p>
+        <p>इस मंगल अवसर पर वर-वधु को अपना स्नेहिल आशीर्वाद प्रदान करने हेतु आप सपरिवार सादर आमंत्रित हैं। आपकी उपस्थिति हमारे लिए अत्यंत महत्वपूर्ण है।</p>
+        <p><strong>दर्शनाभिलाषी:</strong><br>${data.hostName}</p>
+        <p><strong>संपर्क सूत्र:</strong><br>
+        ${data.groomContact ? `वर पक्ष: ${data.groomContact}<br>` : ''}
+        ${data.brideContact ? `वधु पक्ष: ${data.brideContact}` : ''}</p>
+      `;
+
+      const cardPreview = document.getElementById('cardPreview');
+      cardPreview.innerHTML = html;
+      cardPreview.style.opacity = '1'; 
+
+      const shareableLink = generateShareableLink(data);
+      document.getElementById('shareableLink').value = shareableLink;
+      document.getElementById('generatedLinkContainer').style.display = 'block';
+      document.getElementById('shareControls').style.display = 'block';
+
+      // Update linkInfo based on protocol for clarity
+      if (window.location.protocol.startsWith("file")) {
+          document.getElementById('linkInfo').textContent = "चेतावनी: यह लिंक स्थानीय रूप से बनाया गया है और दूसरों के साथ शेयर करने पर काम नहीं करेगा। कृपया इस पेज को वेब सर्वर पर होस्ट करें।";
+          document.getElementById('linkInfo').style.color = 'red';
+      } else {
+          document.getElementById('linkInfo').textContent = "इस लिंक को कॉपी करके शेयर करें। यह लिंक खोलने पर निमंत्रण फॉर्म में जानकारी भरी हुई मिलेगी।";
+          document.getElementById('linkInfo').style.color = '#555';
+      }
+    }
+
+    function getInvitationTextForSharing() {
+      const data = getFormData();
+      const formattedDate = formatDate(data.weddingDate);
+      const shareableLinkValue = document.getElementById('shareableLink').value;
+      
+      let linkForSharing = shareableLinkValue;
+      // If the link is a file:// link, don't include it as it won't work for others.
+      if (window.location.protocol.startsWith("file")) {
+          linkForSharing = "(लिंक शेयर करने के लिए इस पेज को वेब सर्वर पर होस्ट करें)";
+      }
+
+
+      return `
+        ।। शादी का निमंत्रण ।।
+
+        आपको यह बताते हुए हर्ष हो रहा है कि ${data.groomName} (सुपुत्र श्री ${data.groomFather}) का शुभ विवाह ${data.brideName} (सुपुत्री श्री ${data.brideFather}) के साथ दिनांक ${formattedDate} को ${data.weddingTime} बजे ${data.venue} पर होना निश्चित हुआ है।
+
+        आप सपरिवार सादर आमंत्रित हैं।
+        भवदीय,
+        ${data.hostName}
+
+        विस्तृत जानकारी के लिए (यदि वेब पर होस्टेड है): ${linkForSharing}
+      `.trim().replace(/\n\s*\n/g, '\n\n'); // Clean up extra newlines
+    }
+
+    function shareInviteSystem() {
+      const textToShare = getInvitationTextForSharing();
+      const shareableLinkValue = document.getElementById('shareableLink').value;
+
+      let shareObject = {
+          title: 'शादी का निमंत्रण',
+          text: textToShare,
+      };
+
+      // Only add URL if it's a proper http/https URL
+      if (shareableLinkValue && !shareableLinkValue.startsWith("file:")) {
+          shareObject.url = shareableLinkValue;
+      }
+
+      if (navigator.share) {
+        navigator.share(shareObject).catch(err => {
+            console.log('System share failed', err);
+            alert('शेयर करने में त्रुटि हुई।');
+        });
+      } else {
+        alert('आपके ब्राउज़र में वेब शेयर सुविधा समर्थित नहीं है। कृपया लिंक कॉपी करें और मैनुअली शेयर करें।');
+      }
+    }
+
+    function shareOnWhatsApp() {
+      const textToShare = getInvitationTextForSharing(); 
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(textToShare)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+
+  </script>
+</body>
+</html>
